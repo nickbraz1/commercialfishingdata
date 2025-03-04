@@ -7,23 +7,27 @@ This repository contains data obtained by the [Data Liberation Project](https://
 The  provided by the CDC and NIOSH via the Data Liberation Project contain information on **fatalities and vessel disasters** in the U.S. commercial fishing industry. These records enable analysis of industry hazards and help answer questions like:
 - Where are the most hazardous fisheries?
 - What are the most common causes of fatalities?
-- What prevention efforts would be most effective?
+- When are fatalaties most likely to occur?
+- Have fatalaties been increasing or decreasing?
+- What states have recorded the most fatalities?
+
 
 ## Code
 
-This repository contains data and analysis files related to the CFID dataset:
+This records repository contains data and analysis files related to the CFID dataset:
 
-- [`comfish-analysis.malloy`](comfish-analysis.malloy), sources all the data tables for the analysis portion of this repository.
-- [`comfish-analysis.malloynb`](comfish-analysis.malloynb), performs the data analysis using Malloy.
-- [`analysis.py`](analysis.py), contains Python code for additional statistical analysis and visualization.
+- [`comfishdata.csv`](comfishdata.csv), sources all the data tables for the analysis portion of this repository.
+- [`commercialfishingdata.malloynb`](commercialfishingdata.malloynb), performs the data analysis using Malloy.
+
 
 ## Summary of Findings
 
 The key insights from the analysis include:
-- **Most hazardous fisheries** are concentrated in specific geographic regions.
+- **Most hazardous fisheries** are concentrated in specific geographic regions. The Pacific Area tends to be more dangerous than the Atlantic Area.
 - **Drowning and vessel instability** are the most common causes of fatalities.
-- The majority of vessel disasters involve **wood and fiberglass hull materials**.
-- Seasonal variations significantly impact incident rates.
+- The majority of vessel disasters involve **steel and fiberglass hull materials**, although the majority of hulls are made from these materials.
+- More fatalities occur when water temperature is lower. Vessel Types classified as "Catchers" recorded the most fatalities. Similarly, Sole, Code and Shrimp represent the top three most fatal species fisherman are after. Deckhands were most likely to loose their life as a result of drowning. 
+- While Hawaii, Washington and Alaska are the top three most dangerous states to fish in, the number of fatalities per year in the US have been steadily declining since 2000. 
 
 ## Licensing
 
@@ -41,4 +45,4 @@ Special thanks to **NIOSH, CDC, and the Data Liberation Project** for making thi
 
 ---
 
-For any questions or collaborations, feel free to contact **[your.email@example.com]** or submit a pull request!
+For any questions or collaborations, feel free to contact **[nbraz@zagmail.gonzaga.edu]** or submit a pull request!
