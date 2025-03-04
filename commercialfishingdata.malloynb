@@ -1,0 +1,331 @@
+>>>malloy
+source: ComFishing is duckdb.table('./comfishdata.csv') extend {
+    measure:
+    num_fatalities is sum(`NumberOfFatalities`)
+    avg_waveheight is avg(`WaveHeightFeet`)
+    num_incidents is count('PersonID')
+    weather_related is count(`WeatherRelated`)
+    avg_numpplboard is avg(`PeopleOnBoard`)
+    num_events is count(`Event1`)
+    avg_milesfromshore is avg(`MilesFromShore`)
+    avg_agerange is count(`AgeRange`)
+    year_built is count(`YearBuilt`)
+    avg_length is avg(`LengthFeet`)
+}
+>>>markdown
+The presentation analyzes relationships between factors like time of day, region, age, and commercial fishing vessels using the CFID database. With 3,559 records and 157 attributes, it highlights patterns in fatalities and vessel disasters, identifying hazardous fisheries and common causes. The analysis offers valuable insights for targeted safety interventions, though the absence of detailed linking identifiers poses challenges for deeper analysis.
+>>>markdown
+Map of Fatalities
+>>>malloy
+ # shape_map
+run: ComFishing -> {
+    group_by: State
+    aggregate: num_fatalities
+}
+>>>markdown
+Year vs. Fatalities
+>>>malloy
+# line_chart
+run: ComFishing -> {
+    group_by: `Year`
+    aggregate: num_fatalities
+}
+>>>markdown
+% Change in Fatalities by Year (Lag Function)
+>>>malloy
+run: ComFishing -> {
+    group_by: `Year`
+    aggregate: num_fatalities
+    calculate: 
+        last_year is lag(num_fatalities, 1)
+        percent_change is 
+                (num_fatalities - last_year) / last_year * 100
+    order_by: `Year`
+}
+>>>markdown
+What were the most dangerous years to fish in Alaska?
+>>>malloy
+# bar_chart
+run: ComFishing -> {
+    group_by: State, `Year`
+    aggregate: num_fatalities
+    where: State = 'Alaska'
+    order_by: `Year`
+}
+>>>markdown
+Water Temp. vs. Fatalities
+>>>malloy
+# line_chart
+run: ComFishing -> {
+    group_by: WaterTempF
+    aggregate: num_fatalities
+    where: WaterTempF >= 20
+}
+>>>markdown
+What states do fisherman go the farthest off shore?
+>>>malloy
+# line_chart
+run: ComFishing -> {
+    group_by: State
+    aggregate: avg_milesfromshore
+
+}
+>>>markdown
+Hull Material vs. Fatalities
+>>>malloy
+# bar_chart
+run: ComFishing -> {
+    group_by: HullMaterial
+    aggregate: num_fatalities
+}
+>>>markdown
+Fatalities by Fishery Type
+>>>malloy
+# bar_chart
+run: ComFishing -> {
+    group_by: FisheryType
+    aggregate: num_fatalities
+}
+>>>markdown
+Air Temp vs. Fatalities
+>>>malloy
+# line_chart
+run: ComFishing -> {
+    group_by: AirTempF
+    aggregate: num_fatalities
+    order_by: AirTempF
+}
+>>>markdown
+Having grown up in Rhode Island, I always heard that lobster fishing was the most dangerous type of fishing  in our area. The bar chart below does not reflect that assumption. 
+>>>malloy
+# bar_chart
+run: ComFishing -> {
+    group_by: Species, State
+    aggregate: num_fatalities
+    where: State = 'Rhode Island'
+}
+>>>markdown
+State vs. Fatalities
+>>>malloy
+run: ComFishing -> {
+    group_by: State
+    aggregate: num_fatalities
+}
+>>>markdown
+Wave Height vs. Incident Type
+>>>malloy
+run: ComFishing -> {
+    group_by: IncidentType
+    aggregate: avg_waveheight
+    limit: 3
+}
+>>>markdown
+Fatalities Breakdown by Water Temp
+>>>malloy
+
+run: ComFishing -> {
+    group_by: WaterTempF
+    aggregate: num_fatalities
+    where: WaterTempF >= 20
+    order_by: WaterTempF
+}
+>>>markdown
+Incident Type vs. Fatalities
+>>>malloy
+run: ComFishing -> {
+    group_by: IncidentType
+    aggregate: num_fatalities
+
+}
+>>>markdown
+Weather Related vs. Incident Type
+>>>malloy
+run: ComFishing -> {
+    group_by: IncidentType
+    aggregate: weather_related
+}
+>>>markdown
+Falalities vs. Region
+>>>malloy
+
+run: ComFishing -> {
+    group_by: USCGRegion
+    aggregate: num_fatalities
+}
+>>>markdown
+Number of Incidents By Region
+>>>malloy
+
+run: ComFishing -> {
+    group_by: USCGRegion
+    aggregate: num_incident_per_type is count()
+}
+>>>markdown
+Number of Incidents
+>>>malloy
+run: ComFishing -> {
+    group_by: IncidentType
+    aggregate: num_incident_per_type is count()
+}
+>>>markdown
+Number of Incidents vs. Year
+>>>malloy
+# line_chart
+run: ComFishing -> {
+    group_by: `Year`
+    aggregate: num_incident_per_type is count()
+}
+>>>markdown
+Fatalities by Year Range
+>>>malloy
+# bar_chart
+run: ComFishing -> {
+    group_by: YearRange
+    aggregate: num_fatalities
+}
+>>>markdown
+Total Number of Fatalities vs. Total Incidents
+>>>malloy
+run: ComFishing -> {
+    group_by: NumberOfFatalities 
+    aggregate: num_incident_per_type is count()
+    order_by: NumberOfFatalities
+}
+>>>markdown
+Vessel Type vs. Avg Number People on Board
+>>>malloy
+run: ComFishing -> {
+    group_by: VesselType
+    aggregate: avg_numpplboard
+}
+>>>markdown
+Vessel Type vs. Number of Incidents
+>>>malloy
+
+run: ComFishing -> {
+    group_by: VesselType
+    aggregate: num_incident_per_type is count()
+}
+>>>markdown
+Vessel Type vs. Number of Fatalities 
+>>>malloy
+run: ComFishing -> {
+    group_by: VesselType
+    aggregate: num_fatalities
+}
+>>>markdown
+State and Vessel vs. Fatalities
+>>>malloy
+
+run: ComFishing -> {
+    group_by: VesselType, State
+    aggregate: num_fatalities
+}
+>>>markdown
+Number of Events by Type
+>>>malloy
+run: ComFishing -> {
+    group_by: Event1
+    aggregate: num_events_per_type is count()
+}
+>>>markdown
+Incident Type vs. Miles From Shore
+>>>malloy
+run: ComFishing -> {
+    group_by: IncidentType
+    aggregate: avg_milesfromshore
+}
+>>>markdown
+Species vs. Number of Fatalities
+>>>malloy
+run: ComFishing -> {
+    group_by: Species
+    aggregate: num_fatalities
+}
+>>>markdown
+Scatter Chart: State & Species vs. Fatalities
+>>>malloy
+# scatter_chart
+run: ComFishing -> {
+    group_by: Species, State
+    aggregate: num_fatalities
+}
+>>>malloy
+run: ComFishing -> {
+    group_by: Species, State
+    aggregate: num_fatalities
+}
+>>>malloy
+# bar_chart
+run: ComFishing -> {
+    group_by: HullMaterial
+    aggregate: num_fatalities
+}
+>>>markdown
+Number of Fatalities vs. Position
+>>>malloy
+
+run: ComFishing -> {
+    group_by: Position
+    aggregate: num_fatalities
+}
+>>>markdown
+Age Range vs Fatalities
+>>>malloy
+run: ComFishing -> {
+    group_by: AgeRange
+    aggregate: num_fatalities
+}
+>>>markdown
+Avg Age by Position
+>>>malloy
+run: ComFishing -> {
+    group_by: Position, AgeRange
+    aggregate: avg_agerange_per_type is count()
+}
+>>>markdown
+New Hampshire
+>>>malloy
+run: ComFishing -> {
+    group_by: Species, State
+    aggregate: num_fatalities
+    where: State = 'New Hampshire'
+}
+>>>markdown
+What state is the most dangerous for Lobster fishing?
+>>>malloy
+run: ComFishing -> {
+    group_by: Species, State
+    aggregate: num_fatalities
+    where: Species = 'Lobster'
+}
+>>>markdown
+----Years Fishing vs. Number of Incidents
+>>>markdown
+---- Were smaller or larger boats more susceptible to fatailities?
+>>>malloy
+-- run: ComFishing -> {
+  --  group_by: avg_length
+   -- aggregate: num_incident_per_type is count()
+--}
+>>>markdown
+What was the primary cause of death?
+>>>malloy
+run: ComFishing -> {
+    group_by: CauseOfDeath
+    aggregate: num_fatalities
+}
+>>>markdown
+Average Time in Water vs. Number of Incidents
+>>>malloy
+run: ComFishing -> {
+    group_by: TimeInWater
+    aggregate: num_incident_per_type is count()
+}
+>>>markdown
+Did older ships record more incidents?
+>>>malloy
+----run: ComFishing -> {
+---    group_by: year_built
+ ----   aggregate: num_incident_per_type is count()
+----}
